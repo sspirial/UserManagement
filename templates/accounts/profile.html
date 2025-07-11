@@ -1,10 +1,26 @@
 {% extends "base.html" %}
 
-{% block title %} User Profile {% endblock %}
-
 {% block content %}
-<h2>User Profile</h2>
-<p>Username: {{ user.username }}</p>
-<p>Email: {{ user.email }}</p>
-<p>First Name: {{ user.first_name }}</p>
+    <h2>User Profile</h2>
+
+    {% if user.is_authenticated %}
+        <form action="" method="post">
+            {% csrf_token %}
+            <label for="username">Username: </label>
+            <input type="text" name="username" value={{ user.username }}><br>
+            <label for="email">Email: </label>
+            <input type="text" name="email" value={{ user.email }}><br>
+            <label for="first_name">First Name: </label>
+            <input type="text" name="first_name" value={{ user.first_name }}><br>
+            <p>Change password <a href="/accounts/password_change/">here</a></p>
+            <input type="submit" value="update" />
+        </form>
+
+        <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <input type="submit" value="logout" />
+        </form>
+    {% else %}
+        <h2>{{ user.message }}</h2>
+    {% endif %}
 {% endblock %}

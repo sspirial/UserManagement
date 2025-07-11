@@ -2,17 +2,22 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}{% endblock %}</title>
+    <title>{% block title %}User Management{% endblock %}</title>
 </head>
 <body>
-<nav>
-    <ul>
-        <li><a href="#">register</a></li>
-        <li><a href="#">login</a></li>
-        <li><a href="#">logout</a></li>
-        <li><a href="#">home</a></li>
-    </ul>
-</nav>
-{% block content %} {% endblock %}
+    {% block nav %}
+        <nav>
+            <ul>
+                {% if not user.is_authenticated %}
+                    <li><a href={% url 'accounts:signup' %}>register</a></li>
+                    <li><a href={% url 'login' %}>login</a></li>
+                {% else %}
+                    <li><a href="/">home</a></li>
+                    <li><a href={% url 'accounts:profile' %}>profile</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endblock %}
+    {% block content %} {% endblock %}
 </body>
 </html>

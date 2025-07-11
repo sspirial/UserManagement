@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Accounts{% endblock %}
+
+{% block content %}
+<h1>Manage Accounts</h1>
+
+{% if users %}
+    <ul>
+        {% for account in users %}
+            <li>{{ account.username }} - {{ account.email }}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No accounts found.</p>
+{% endif %}
+{% endblock %}
