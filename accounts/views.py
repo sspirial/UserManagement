@@ -1,6 +1,7 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm
+from .forms import CustomUserCreationForm
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth.tokens import default_token_generator
@@ -10,6 +11,24 @@ from django.urls import reverse
 
 
 # Create your views here.
+@login_required(login_url='login')
+def index(request):
+    """
+    Manage all the user accounts. accessible only to users that are staff
+    :param request: Django HttpRequest object
+    :return: Rendered template with user list or redirect to profile
+    """
+    if request.user.is_staff:
+        users = User.objects.all()
+        print(users)
+        context = {
+            'users': users,
+        }
+        return render(request, 'accounts/index.html', context)
+    else:
+        return redirect('accounts:profile')
+
+@login_required
 def profile(request):
     """
     Render the user profile page.
@@ -19,15 +38,24 @@ def profile(request):
         context = {
             'user': user,
         }
-        return render(request, 'accounts/profile.html', context)
-    return render(request, 'accounts/profile.html', context={'user': 'You are not authenticated'})
+        if request.method == 'GET':
+            return render(request, 'accounts/profile.html', context)
+        elif request.method == 'POST':
+            user.username = request.POST.get('username', user.username)
+            user.email = request.POST.get('email', user.email)
+            user.first_name = request.POST.get('first_name', user.first_name)
+            user.save()
+            context = {'user': user}
+            return render(request, 'accounts/profile.html')
+
+    return redirect('accounts:login')
 
 def signup(request):
     """
     Render the signup page and send verification email.
     """
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
             user.is_active = False
@@ -48,7 +76,7 @@ def signup(request):
             )
             return render(request, 'registration/activation_sent.html')
     else:
-        form = UserCreationForm()
+        form = CustomUserCreationForm()
     return render(request, 'registration/signup.html', {'form': form})
 
 # Activation view
@@ -61,6 +89,6 @@ def activate(request, uidb64, token):
     if user is not None and default_token_generator.check_token(user, token):
         user.is_active = True
         user.save()
-        return redirect('profile')
+        return redirect('accounts:profile')
     else:
         return render(request, 'registration/activation_invalid.html')
