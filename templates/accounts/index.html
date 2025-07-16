@@ -7,9 +7,17 @@
 
 {% if users %}
     <ul>
-        {% for account in users %}
-            <li>{{ account.username }} - {{ account.email }}</li>
-        {% endfor %}
+        {% comment %} add a form whose elements are users details I should be able to delete a user here {% endcomment %}
+        <form method="POST" action="{% url 'accounts:index' %}">
+            {% csrf_token %}
+            {% for account in users %}
+                <li>
+                    {{ account.username }} - {{ account.email }}
+                    <input type="hidden" name="user_id" value="{{ account.id }}">
+                    <button type="submit">Delete</button>
+                </li>
+            {% endfor %}
+        </form>
     </ul>
 {% else %}
     <p>No accounts found.</p>

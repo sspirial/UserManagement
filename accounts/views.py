@@ -24,6 +24,13 @@ def index(request):
         context = {
             'users': users,
         }
+        if request.method == 'POST':
+            # Handle user deletion or other actions
+            user_id = request.POST.get('user_id')
+            if user_id:
+                user = User.objects.get(id=user_id)
+                user.delete()
+                return redirect('accounts:index')
         return render(request, 'accounts/index.html', context)
     else:
         return redirect('accounts:profile')
