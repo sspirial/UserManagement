@@ -3,6 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}User Management{% endblock %}</title>
+    <style>
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background-color: #f4f4f4;
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #ff6347;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #d32f2f;
+        }
+    </style>
 </head>
 <body>
     {% block nav %}
